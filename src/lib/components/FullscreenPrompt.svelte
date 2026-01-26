@@ -4,26 +4,27 @@
 	interface Props {
 		ondismiss: () => void;
 		onexitstart?: () => void;
+		onwipestart?: (logoRect: DOMRect) => void;
 	}
 
-	let { ondismiss, onexitstart }: Props = $props();
+	let { ondismiss, onexitstart, onwipestart }: Props = $props();
 	let exiting = $state(false);
+	let logoContainer: HTMLElement;
 
-	function exit(callback: () => void) {
+	function startWipe() {
+		if (logoContainer) onwipestart?.(logoContainer.getBoundingClientRect());
+	}
+
+	function exit(fullscreen: boolean) {
 		exiting = true;
 		onexitstart?.();
-		setTimeout(callback, 600);
-	}
 
-	function handleEnterFullscreen() {
-		exit(() => {
+		if (fullscreen) {
 			document.documentElement.requestFullscreen?.();
-			ondismiss();
-		});
-	}
-
-	function handleDismiss() {
-		exit(ondismiss);
+			setTimeout(startWipe, 1000); // Wait for fullscreen to settle
+		} else {
+			startWipe();
+		}
 	}
 </script>
 
@@ -64,7 +65,7 @@
 	</svg>
 
 	<div class="prompt">
-		<div class="logo-container">
+		<div class="logo-container" bind:this={logoContainer}>
 			<GlowLogo size={300} />
 		</div>
 		<div class="content">
@@ -74,10 +75,10 @@
 			</h1>
 			<p class="hint">Ambient warmth for those moments<br />without soft lighting.</p>
 			<div class="buttons">
-				<button class="primary" onclick={handleEnterFullscreen}>
+				<button class="primary" onclick={() => exit(true)}>
 					Enter Fullscreen
 				</button>
-				<button class="secondary" onclick={handleDismiss}>
+				<button class="secondary" onclick={() => exit(false)}>
 					Continue Windowed
 				</button>
 			</div>
@@ -94,7 +95,7 @@
 		align-items: center;
 		justify-content: center;
 		font-family: 'Space Grotesk', system-ui, sans-serif;
-		background: #0a0a0a;
+		background: transparent;
 	}
 
 	/* Orange background - always there, revealed when dark fades */
@@ -186,51 +187,27 @@
 	}
 
 	/* === EXIT ANIMATIONS === */
-	.overlay.exiting .dark-layer {
+	/* Content stays visible - wipe covers it */
+	.overlay.exiting .orange-layer,
+	.overlay.exiting .dark-layer,
+	.overlay.exiting .glow-layer,
+	.overlay.exiting .prompt {
 		animation: none;
+	}
+
+	.overlay.exiting .dark-layer {
 		opacity: 0;
 	}
 
-	.overlay.exiting .glow-layer {
-		animation: glowOut 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
-	}
-
-	@keyframes glowOut {
-		from { opacity: 1; }
-		to { opacity: 0; }
-	}
-
-	.overlay.exiting .logo-container :global(.mark) {
-		animation: emblemOut 0.5s cubic-bezier(0.4, 0, 1, 1) forwards;
-	}
-
-	@keyframes emblemOut {
-		from { opacity: 1; }
-		to { opacity: 0; }
-	}
-
+	.overlay.exiting .logo-container :global(.mark),
 	.overlay.exiting .logo-container :global(.logo-text) {
-		animation: textOut 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
-	}
-
-	@keyframes textOut {
-		from { opacity: 1; }
-		to { opacity: 0; }
+		animation: none;
+		opacity: 1;
 	}
 
 	.overlay.exiting .content {
-		animation: contentOut 0.35s cubic-bezier(0.4, 0, 1, 1) forwards;
-	}
-
-	@keyframes contentOut {
-		from {
-			opacity: 1;
-			transform: translateY(0);
-		}
-		to {
-			opacity: 0;
-			transform: translateY(-12px);
-		}
+		animation: none;
+		opacity: 1;
 	}
 
 	/* === TYPOGRAPHY & BUTTONS === */
