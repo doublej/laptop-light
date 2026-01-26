@@ -3,6 +3,7 @@
 
 	interface Props {
 		visible: boolean;
+		delayEntrance?: boolean;
 		tones: Tone[];
 		selectedToneId: string;
 		brightness: number;
@@ -26,6 +27,7 @@
 
 	let {
 		visible,
+		delayEntrance = false,
 		tones,
 		selectedToneId,
 		brightness,
@@ -67,7 +69,7 @@
 	/>
 </svelte:head>
 
-<div class="control-panel" class:visible>
+<div class="control-panel" class:visible class:delay-entrance={delayEntrance}>
 	<!-- Main control bar -->
 	<div class="main-bar">
 		<!-- Tone swatches -->
@@ -81,11 +83,9 @@
 					aria-label={tone.name}
 					title={tone.name}
 				>
-					{#if tone.id === selectedToneId}
-						<svg class="check" viewBox="0 0 16 16" fill="currentColor">
-							<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 1 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/>
-						</svg>
-					{/if}
+					<svg class="check" viewBox="0 0 16 16" fill="currentColor">
+						<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 1 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/>
+					</svg>
 				</button>
 			{/each}
 		</div>
@@ -171,7 +171,7 @@
 				<span class="setting-label">Candle Flicker</span>
 				<span class="toggle-track"><span class="toggle-thumb"></span></span>
 			</button>
-			{#if flickerEnabled}
+			<div class="flicker-slider-container" class:show={flickerEnabled}>
 				<input
 					type="range"
 					min="0"
@@ -180,8 +180,9 @@
 					oninput={handleFlickerInput}
 					class="slider mini"
 					aria-label="Flicker intensity"
+					tabindex={flickerEnabled ? 0 : -1}
 				/>
-			{/if}
+			</div>
 		</div>
 
 		<!-- HDR -->
@@ -242,6 +243,10 @@
 			transform 0.35s cubic-bezier(0, 0, 0.2, 1);
 	}
 
+	.control-panel.visible.delay-entrance {
+		transition-delay: 200ms;
+	}
+
 	.main-bar {
 		display: flex;
 		align-items: center;
@@ -296,6 +301,16 @@
 		width: 14px;
 		height: 14px;
 		color: rgba(0, 0, 0, 0.5);
+		opacity: 0;
+		transform: scale(0.6);
+		transition:
+			opacity 0.2s cubic-bezier(0, 0, 0.2, 1),
+			transform 0.2s cubic-bezier(0, 0, 0.2, 1);
+	}
+
+	.tone-swatch.selected .check {
+		opacity: 1;
+		transform: scale(1);
 	}
 
 	/* Brightness */
@@ -351,6 +366,23 @@
 
 	.slider.mini {
 		width: 60px;
+	}
+
+	.flicker-slider-container {
+		overflow: hidden;
+		max-width: 0;
+		opacity: 0;
+		transition:
+			max-width 0.25s cubic-bezier(0.4, 0, 1, 1),
+			opacity 0.2s cubic-bezier(0.4, 0, 1, 1);
+	}
+
+	.flicker-slider-container.show {
+		max-width: 72px;
+		opacity: 1;
+		transition:
+			max-width 0.25s cubic-bezier(0, 0, 0.2, 1) 50ms,
+			opacity 0.25s cubic-bezier(0, 0, 0.2, 1) 50ms;
 	}
 
 	/* Action buttons */
@@ -548,7 +580,9 @@
 	@media (prefers-reduced-motion: reduce) {
 		.control-panel,
 		.settings-panel,
-		.setting-row {
+		.setting-row,
+		.tone-swatch .check,
+		.flicker-slider-container {
 			transition-duration: 0.01ms !important;
 			transition-delay: 0s !important;
 		}

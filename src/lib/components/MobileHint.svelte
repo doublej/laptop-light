@@ -4,10 +4,15 @@
 	const DISMISSED_KEY = 'glow-mobile-hint-dismissed';
 
 	let visible = $state(false);
+	let exiting = $state(false);
 
 	function dismiss() {
-		visible = false;
+		if (exiting) return;
+		exiting = true;
 		localStorage.setItem(DISMISSED_KEY, 'true');
+		setTimeout(() => {
+			visible = false;
+		}, 300);
 	}
 
 	onMount(() => {
@@ -19,7 +24,7 @@
 </script>
 
 {#if visible}
-	<button class="hint" onclick={dismiss} aria-label="Dismiss mobile hint">
+	<button class="hint" class:exiting onclick={dismiss} aria-label="Dismiss mobile hint">
 		<span class="icon">📱</span>
 		<span class="text">Connect your phone to control the light</span>
 		<span class="close">×</span>
@@ -29,7 +34,7 @@
 <style>
 	.hint {
 		position: fixed;
-		bottom: 100px;
+		bottom: 140px;
 		left: 50%;
 		transform: translateX(-50%);
 		display: flex;
@@ -45,7 +50,7 @@
 		font-size: 14px;
 		color: rgba(255, 255, 255, 0.9);
 		cursor: pointer;
-		z-index: 50;
+		z-index: 15;
 		transition:
 			opacity 0.2s cubic-bezier(0, 0, 0.2, 1),
 			transform 0.2s cubic-bezier(0, 0, 0.2, 1),
@@ -62,6 +67,14 @@
 			opacity: 1;
 			transform: translateX(-50%) translateY(0);
 		}
+	}
+
+	.hint.exiting {
+		opacity: 0;
+		transform: translateX(-50%) translateY(16px);
+		transition:
+			opacity 0.3s cubic-bezier(0.4, 0, 1, 1),
+			transform 0.3s cubic-bezier(0.4, 0, 1, 1);
 	}
 
 	.hint:hover {
@@ -91,6 +104,10 @@
 		.hint {
 			animation: none;
 			opacity: 1;
+			transition-duration: 0.01ms !important;
+		}
+
+		.hint.exiting {
 			transition-duration: 0.01ms !important;
 		}
 	}
