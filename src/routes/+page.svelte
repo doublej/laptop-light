@@ -288,13 +288,11 @@
 	<!-- Open Graph -->
 	<meta property="og:title" content="Laptop Light - Ambient Screen Lighting" />
 	<meta property="og:description" content="Turn your laptop screen into warm ambient lighting. Control from your phone via WebRTC." />
-	<meta property="og:image" content="/og-image.png" />
 	<meta property="og:url" content="/" />
 
 	<!-- Twitter -->
 	<meta name="twitter:title" content="Laptop Light - Ambient Screen Lighting" />
 	<meta name="twitter:description" content="Turn your laptop screen into warm ambient lighting. Control from your phone." />
-	<meta name="twitter:image" content="/og-image.png" />
 
 	<!-- Additional SEO -->
 	<meta name="keywords" content="ambient lighting, screen light, laptop light, warm light, candlelight effect, HDR display, remote control, WebRTC" />

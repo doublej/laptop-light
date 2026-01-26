@@ -149,12 +149,10 @@
 	<!-- Open Graph -->
 	<meta property="og:title" content="Laptop Light Remote" />
 	<meta property="og:description" content="Control your laptop's ambient lighting from your phone." />
-	<meta property="og:image" content="/og-image.png" />
 
 	<!-- Twitter -->
 	<meta name="twitter:title" content="Laptop Light Remote" />
 	<meta name="twitter:description" content="Control your laptop's ambient lighting from your phone." />
-	<meta name="twitter:image" content="/og-image.png" />
 
 	<!-- Prevent indexing of remote control page -->
 	<meta name="robots" content="noindex, nofollow" />
