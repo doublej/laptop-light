@@ -54,4 +54,4 @@ export const tones: Tone[] = [
 	}
 ];
 
-export const defaultToneId = 'amber';
+export const defaultToneId = 'candlelight';
