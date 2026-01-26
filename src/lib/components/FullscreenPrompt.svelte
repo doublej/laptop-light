@@ -31,6 +31,9 @@
 	<div class="prompt">
 		<GlowLogo size={220} />
 		<p>Turn your screen into warm ambient lighting</p>
+		<p class="hint">
+			For when you find yourself without any soft light.
+		</p>
 		<div class="buttons">
 			<button class="primary" onclick={handleEnterFullscreen}>
 				Enter Fullscreen
@@ -89,6 +92,12 @@
 		color: rgba(30, 30, 30, 0.6);
 		font-size: 1rem;
 		letter-spacing: -0.01em;
+	}
+
+	.hint {
+		margin: -16px 0 28px;
+		font-size: 0.75rem;
+		color: rgba(30, 30, 30, 0.4);
 	}
 
 	.buttons {
