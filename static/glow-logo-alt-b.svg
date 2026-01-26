@@ -30,7 +30,7 @@
     <!-- Mask with laptop cutout -->
     <mask id="laptop-cutout">
       <rect x="0" y="0" width="100" height="100" fill="white"/>
-      <polygon fill="black" points="24,15 54,20 56,62 20,66"/>
+      <polygon fill="black" points="12,15 68,20 70,62 8,66"/>
     </mask>
 
     <style>
