@@ -68,14 +68,17 @@
 			<GlowLogo size={300} />
 		</div>
 		<div class="content">
-			<p class="tagline">Turn your screen into warm ambient lighting</p>
-			<p class="hint">For when you find yourself without any soft light.</p>
+			<h1 class="tagline">
+				<span class="line">Your screen,</span>
+				<span class="line accent">reimagined as light.</span>
+			</h1>
+			<p class="hint">Ambient warmth for those moments without soft lighting.</p>
 			<div class="buttons">
 				<button class="primary" onclick={handleEnterFullscreen}>
 					Enter Fullscreen
 				</button>
 				<button class="secondary" onclick={handleDismiss}>
-					Continue windowed
+					Continue Windowed
 				</button>
 			</div>
 		</div>
@@ -231,47 +234,42 @@
 	}
 
 	/* === TYPOGRAPHY & BUTTONS === */
-	p {
-		margin: 12px 0 32px;
-	}
-
 	.tagline {
-		font-size: 1.375rem;
+		margin: 0 0 24px;
+		font-size: clamp(1.75rem, 5vw, 2.5rem);
 		font-weight: 600;
-		letter-spacing: -0.03em;
-		line-height: 1.3;
-		color: #1a0800;
-		text-shadow:
-			0 0 30px rgba(255, 255, 255, 0.6),
-			0 0 60px rgba(255, 255, 255, 0.3),
-			0 1px 0 rgba(255, 255, 255, 0.4);
-		animation: textGlow 3s ease-in-out infinite alternate;
+		letter-spacing: -0.04em;
+		line-height: 1.15;
+		text-align: center;
 	}
 
-	@keyframes textGlow {
-		from {
-			text-shadow:
-				0 0 30px rgba(255, 255, 255, 0.6),
-				0 0 60px rgba(255, 255, 255, 0.3),
-				0 1px 0 rgba(255, 255, 255, 0.4);
-		}
-		to {
-			text-shadow:
-				0 0 40px rgba(255, 255, 255, 0.8),
-				0 0 80px rgba(255, 255, 255, 0.4),
-				0 0 120px rgba(255, 200, 150, 0.2),
-				0 1px 0 rgba(255, 255, 255, 0.5);
-		}
+	.tagline .line {
+		display: block;
+		color: rgba(20, 5, 0, 0.9);
+		text-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
+	}
+
+	.tagline .accent {
+		background: linear-gradient(
+			135deg,
+			#2a0a00 0%,
+			#5c1a00 40%,
+			#1a0500 100%
+		);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+		text-shadow: none;
+		filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3));
 	}
 
 	.hint {
-		margin: -16px 0 28px;
-		font-size: 0.9375rem;
-		font-weight: 500;
-		font-style: italic;
+		margin: 0 0 32px;
+		font-size: 1rem;
+		font-weight: 400;
 		letter-spacing: -0.01em;
-		color: rgba(60, 20, 0, 0.7);
-		text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+		color: rgba(40, 15, 0, 0.65);
+		text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
 	}
 
 	.buttons {
