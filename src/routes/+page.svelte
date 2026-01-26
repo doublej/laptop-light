@@ -6,12 +6,14 @@
 	import FullscreenPrompt from '$lib/components/FullscreenPrompt.svelte';
 	import BrightnessOverlay from '$lib/components/BrightnessOverlay.svelte';
 	import QRCodeModal from '$lib/components/QRCodeModal.svelte';
-	import { createHost, sendState, disconnect, type LightState } from '$lib/peer';
+	import { createHost, sendState, sendMessage, disconnect, type LightState, type PeerMessage } from '$lib/peer';
+	import MobileHint from '$lib/components/MobileHint.svelte';
 
 	const HDR_STORAGE_KEY = 'laptop-light-hdr-enabled';
 	const FLICKER_STORAGE_KEY = 'laptop-light-flicker-enabled';
 	const FLICKER_INTENSITY_STORAGE_KEY = 'laptop-light-flicker-intensity';
 	const WAKE_LOCK_STORAGE_KEY = 'laptop-light-wake-lock-enabled';
+	const REMOTE_URL_KEY = 'glow-remote-url';
 	const HIDE_DELAY = 2500;
 	const OVERLAY_HIDE_DELAY = 1000;
 	const MIN_BRIGHTNESS = 10;
@@ -176,19 +178,35 @@
 		remoteConnected = connected;
 		if (connected) {
 			sendState(getCurrentState());
+			// Save remote URL for reconnection
+			const remoteUrl = `${window.location.origin}/remote?peer=${peerId}`;
+			localStorage.setItem(REMOTE_URL_KEY, remoteUrl);
+			// Notify remote about current QR modal state
+			sendMessage({ type: 'qrModalOpen', open: showQRModal });
+		}
+	}
+
+	function handleRemoteMessage(message: PeerMessage) {
+		if (message.type === 'closeQRModal') {
+			showQRModal = false;
 		}
 	}
 
 	async function openQRModal() {
 		if (!peerId) {
-			peerId = await createHost(handleRemoteState, handleRemoteConnection);
+			peerId = await createHost(handleRemoteState, handleRemoteConnection, handleRemoteMessage);
 		}
 		showQRModal = true;
+		if (remoteConnected) {
+			sendMessage({ type: 'qrModalOpen', open: true });
+		}
 	}
 
 	function closeQRModal() {
 		showQRModal = false;
-		if (!remoteConnected) {
+		if (remoteConnected) {
+			sendMessage({ type: 'qrModalOpen', open: false });
+		} else {
 			disconnect();
 			peerId = '';
 		}
@@ -285,6 +303,10 @@
 		onFullscreenToggle={toggleFullscreen}
 		onQROpen={openQRModal}
 	/>
+
+	{#if controlsVisible && !showFullscreenPrompt && !remoteConnected}
+		<MobileHint />
+	{/if}
 
 	<BrightnessOverlay
 		value={overlayMode === 'flicker' ? flickerIntensity : brightness}

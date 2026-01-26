@@ -2,19 +2,29 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { tones } from '$lib/tones';
-	import { connectToHost, sendState, disconnect, type LightState } from '$lib/peer';
+	import { connectToHost, sendState, sendMessage, disconnect, type LightState, type PeerMessage } from '$lib/peer';
+
+	const REMOTE_URL_KEY = 'glow-remote-url';
+	const HOMESCREEN_HINT_KEY = 'glow-homescreen-hint-dismissed';
 
 	let peerId = $derived($page.url.searchParams.get('peer') ?? '');
 	let connected = $state(false);
 	let connecting = $state(false);
 	let error = $state('');
+	let qrModalOpenOnHost = $state(false);
+	let showHomescreenHint = $state(false);
 
 	let toneId = $state('amber');
 	let brightness = $state(100);
 	let hdrEnabled = $state(false);
 	let flickerEnabled = $state(false);
 	let flickerIntensity = $state(50);
+
+	function isIOS(): boolean {
+		return /iPad|iPhone|iPod/.test(navigator.userAgent);
+	}
 
 	function handleStateUpdate(state: LightState) {
 		toneId = state.toneId;
@@ -27,9 +37,31 @@
 	function handleConnectionChange(isConnected: boolean) {
 		connected = isConnected;
 		connecting = false;
-		if (!isConnected && browser) {
+		if (isConnected && browser) {
+			// Save current URL for reconnection
+			localStorage.setItem(REMOTE_URL_KEY, window.location.href);
+		} else if (!isConnected && browser) {
 			error = 'Connection lost. Refresh to reconnect.';
 		}
+	}
+
+	function handleMessage(message: PeerMessage) {
+		if (message.type === 'qrModalOpen') {
+			qrModalOpenOnHost = message.open;
+			// When QR modal closes on host, show homescreen hint if not dismissed
+			if (!message.open && !localStorage.getItem(HOMESCREEN_HINT_KEY)) {
+				showHomescreenHint = true;
+			}
+		}
+	}
+
+	function hideQROnHost() {
+		sendMessage({ type: 'closeQRModal' });
+	}
+
+	function dismissHomescreenHint() {
+		showHomescreenHint = false;
+		localStorage.setItem(HOMESCREEN_HINT_KEY, 'true');
 	}
 
 	function sendCurrentState() {
@@ -68,14 +100,20 @@
 	}
 
 	onMount(async () => {
+		// If no peer ID in URL, check for saved URL
 		if (!peerId) {
+			const savedUrl = localStorage.getItem(REMOTE_URL_KEY);
+			if (savedUrl) {
+				goto(savedUrl, { replaceState: true });
+				return;
+			}
 			error = 'No peer ID provided. Scan the QR code again.';
 			return;
 		}
 
 		connecting = true;
 		try {
-			await connectToHost(peerId, handleStateUpdate, handleConnectionChange);
+			await connectToHost(peerId, handleStateUpdate, handleConnectionChange, handleMessage);
 		} catch (err) {
 			error = 'Failed to connect. Make sure the laptop app is running.';
 			connecting = false;
@@ -175,6 +213,28 @@
 	{:else}
 		<div class="status-card">
 			<p>Waiting for connection...</p>
+		</div>
+	{/if}
+
+	{#if connected && qrModalOpenOnHost}
+		<div class="qr-overlay">
+			<div class="qr-overlay-content">
+				<span class="check-icon">✓</span>
+				<p>Connected!</p>
+				<button class="hide-qr-btn" onclick={hideQROnHost}>Hide QR Code</button>
+			</div>
+		</div>
+	{/if}
+
+	{#if showHomescreenHint}
+		<div class="homescreen-hint">
+			<button class="dismiss-hint" onclick={dismissHomescreenHint} aria-label="Dismiss">×</button>
+			<p class="hint-title">Save for quick access</p>
+			{#if isIOS()}
+				<p class="hint-instruction">Tap <strong>Share</strong> → <strong>Add to Home Screen</strong></p>
+			{:else}
+				<p class="hint-instruction">Tap <strong>Menu (⋮)</strong> → <strong>Add to Home Screen</strong></p>
+			{/if}
 		</div>
 	{/if}
 </main>
@@ -399,5 +459,106 @@
 
 	.toggle.enabled .thumb {
 		transform: translateX(20px);
+	}
+
+	.qr-overlay {
+		position: fixed;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(0, 0, 0, 0.85);
+		z-index: 100;
+	}
+
+	.qr-overlay-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		text-align: center;
+	}
+
+	.check-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 64px;
+		height: 64px;
+		background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+		border-radius: 50%;
+		font-size: 32px;
+		color: white;
+	}
+
+	.qr-overlay-content p {
+		margin: 0;
+		font-size: 20px;
+		font-weight: 600;
+	}
+
+	.hide-qr-btn {
+		padding: 14px 28px;
+		background: white;
+		border: none;
+		border-radius: 12px;
+		font-size: 16px;
+		font-weight: 500;
+		color: #111;
+		cursor: pointer;
+	}
+
+	.homescreen-hint {
+		position: fixed;
+		bottom: 24px;
+		left: 24px;
+		right: 24px;
+		padding: 16px 20px;
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		border-radius: 16px;
+		z-index: 50;
+		animation: slideUp 0.3s ease-out;
+	}
+
+	@keyframes slideUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.dismiss-hint {
+		position: absolute;
+		top: 8px;
+		right: 12px;
+		padding: 4px 8px;
+		background: none;
+		border: none;
+		font-size: 20px;
+		color: rgba(255, 255, 255, 0.5);
+		cursor: pointer;
+	}
+
+	.hint-title {
+		margin: 0 0 8px;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	.hint-instruction {
+		margin: 0;
+		font-size: 14px;
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	.hint-instruction strong {
+		color: #f59e0b;
 	}
 </style>

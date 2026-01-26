@@ -8,26 +8,45 @@ export interface LightState {
 	flickerIntensity: number;
 }
 
+export type PeerMessage =
+	| { type: 'state'; data: LightState }
+	| { type: 'qrModalOpen'; open: boolean }
+	| { type: 'closeQRModal' };
+
 type StateCallback = (state: LightState) => void;
 type ConnectionCallback = (connected: boolean) => void;
+type MessageCallback = (message: PeerMessage) => void;
+
+const HOST_PEER_ID_KEY = 'glow-host-peer-id';
 
 let peer: Peer | null = null;
 let connection: DataConnection | null = null;
 let stateCallback: StateCallback | null = null;
 let connectionCallback: ConnectionCallback | null = null;
+let messageCallback: MessageCallback | null = null;
 
-function generatePeerId(): string {
-	return 'glow-' + Math.random().toString(36).substring(2, 10);
+function getOrCreateHostPeerId(): string {
+	if (typeof localStorage === 'undefined') {
+		return 'glow-' + Math.random().toString(36).substring(2, 10);
+	}
+	let id = localStorage.getItem(HOST_PEER_ID_KEY);
+	if (!id) {
+		id = 'glow-' + Math.random().toString(36).substring(2, 10);
+		localStorage.setItem(HOST_PEER_ID_KEY, id);
+	}
+	return id;
 }
 
 export function createHost(
 	onState: StateCallback,
-	onConnection: ConnectionCallback
+	onConnection: ConnectionCallback,
+	onMessage?: MessageCallback
 ): Promise<string> {
 	return new Promise((resolve, reject) => {
-		const peerId = generatePeerId();
+		const peerId = getOrCreateHostPeerId();
 		stateCallback = onState;
 		connectionCallback = onConnection;
+		messageCallback = onMessage ?? null;
 
 		peer = new Peer(peerId);
 
@@ -48,7 +67,12 @@ export function createHost(
 			});
 
 			conn.on('data', (data) => {
-				stateCallback?.(data as LightState);
+				const msg = data as PeerMessage;
+				if (msg.type === 'state') {
+					stateCallback?.(msg.data);
+				} else {
+					messageCallback?.(msg);
+				}
 			});
 
 			conn.on('close', () => {
@@ -71,11 +95,13 @@ export function createHost(
 export function connectToHost(
 	peerId: string,
 	onState: StateCallback,
-	onConnection: ConnectionCallback
+	onConnection: ConnectionCallback,
+	onMessage?: MessageCallback
 ): Promise<void> {
 	return new Promise((resolve, reject) => {
 		stateCallback = onState;
 		connectionCallback = onConnection;
+		messageCallback = onMessage ?? null;
 
 		peer = new Peer();
 
@@ -88,7 +114,12 @@ export function connectToHost(
 			});
 
 			connection.on('data', (data) => {
-				stateCallback?.(data as LightState);
+				const msg = data as PeerMessage;
+				if (msg.type === 'state') {
+					stateCallback?.(msg.data);
+				} else {
+					messageCallback?.(msg);
+				}
 			});
 
 			connection.on('close', () => {
@@ -111,8 +142,12 @@ export function connectToHost(
 }
 
 export function sendState(state: LightState): void {
+	sendMessage({ type: 'state', data: state });
+}
+
+export function sendMessage(message: PeerMessage): void {
 	if (connection?.open) {
-		connection.send(state);
+		connection.send(message);
 	}
 }
 
@@ -123,6 +158,7 @@ export function disconnect(): void {
 	peer = null;
 	stateCallback = null;
 	connectionCallback = null;
+	messageCallback = null;
 }
 
 export function isConnected(): boolean {
