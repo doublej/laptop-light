@@ -68,14 +68,14 @@
 			<GlowLogo size={300} />
 		</div>
 		<div class="content">
-			<p>Turn your screen into warm ambient lighting</p>
+			<p class="tagline">Turn your screen into warm ambient lighting</p>
 			<p class="hint">For when you find yourself without any soft light.</p>
 			<div class="buttons">
 				<button class="primary" onclick={handleEnterFullscreen}>
 					Enter Fullscreen
 				</button>
 				<button class="secondary" onclick={handleDismiss}>
-					Skip
+					Continue windowed
 				</button>
 			</div>
 		</div>
@@ -233,23 +233,45 @@
 	/* === TYPOGRAPHY & BUTTONS === */
 	p {
 		margin: 12px 0 32px;
-		color: rgba(10, 5, 0, 0.92);
-		font-size: 1.125rem;
+	}
+
+	.tagline {
+		font-size: 1.375rem;
 		font-weight: 600;
-		letter-spacing: -0.02em;
+		letter-spacing: -0.03em;
+		line-height: 1.3;
+		color: #1a0800;
 		text-shadow:
-			0 1px 0 rgba(255, 255, 255, 0.25),
-			0 2px 4px rgba(180, 80, 0, 0.15);
+			0 0 30px rgba(255, 255, 255, 0.6),
+			0 0 60px rgba(255, 255, 255, 0.3),
+			0 1px 0 rgba(255, 255, 255, 0.4);
+		animation: textGlow 3s ease-in-out infinite alternate;
+	}
+
+	@keyframes textGlow {
+		from {
+			text-shadow:
+				0 0 30px rgba(255, 255, 255, 0.6),
+				0 0 60px rgba(255, 255, 255, 0.3),
+				0 1px 0 rgba(255, 255, 255, 0.4);
+		}
+		to {
+			text-shadow:
+				0 0 40px rgba(255, 255, 255, 0.8),
+				0 0 80px rgba(255, 255, 255, 0.4),
+				0 0 120px rgba(255, 200, 150, 0.2),
+				0 1px 0 rgba(255, 255, 255, 0.5);
+		}
 	}
 
 	.hint {
 		margin: -16px 0 28px;
-		font-size: 0.875rem;
+		font-size: 0.9375rem;
 		font-weight: 500;
-		color: rgba(10, 5, 0, 0.75);
-		text-shadow:
-			0 1px 0 rgba(255, 255, 255, 0.2),
-			0 1px 3px rgba(180, 80, 0, 0.1);
+		font-style: italic;
+		letter-spacing: -0.01em;
+		color: rgba(60, 20, 0, 0.7);
+		text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
 	}
 
 	.buttons {
@@ -311,7 +333,8 @@
 	@media (prefers-reduced-motion: reduce) {
 		.dark-layer,
 		.glow-layer,
-		.content {
+		.content,
+		.tagline {
 			animation: none !important;
 			opacity: 1 !important;
 			transform: none !important;
