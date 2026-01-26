@@ -233,15 +233,19 @@
 	/* === TYPOGRAPHY & BUTTONS === */
 	p {
 		margin: 12px 0 32px;
-		color: rgba(30, 30, 30, 0.7);
-		font-size: 1rem;
-		letter-spacing: -0.01em;
+		color: rgba(20, 10, 0, 0.85);
+		font-size: 1.0625rem;
+		font-weight: 500;
+		letter-spacing: -0.015em;
+		text-shadow: 0 1px 2px rgba(255, 255, 255, 0.15);
 	}
 
 	.hint {
 		margin: -16px 0 28px;
-		font-size: 0.75rem;
-		color: rgba(30, 30, 30, 0.5);
+		font-size: 0.8125rem;
+		font-weight: 400;
+		color: rgba(20, 10, 0, 0.65);
+		text-shadow: 0 1px 1px rgba(255, 255, 255, 0.1);
 	}
 
 	.buttons {
