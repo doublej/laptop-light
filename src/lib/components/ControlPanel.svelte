@@ -221,9 +221,9 @@
 		bottom: 24px;
 		left: 50%;
 		transform: translateX(-50%) translateY(16px);
-		z-index: 10;
+		z-index: 20;
 		display: flex;
-		flex-direction: column;
+		flex-direction: column-reverse;
 		align-items: center;
 		gap: 12px;
 		opacity: 0;
@@ -450,7 +450,7 @@
 			0 1px 2px rgba(0, 0, 0, 0.08);
 		min-width: 200px;
 		opacity: 0;
-		transform: translateY(-8px) scale(0.95);
+		transform: translateY(8px) scale(0.95);
 		transform-origin: bottom center;
 		pointer-events: none;
 		transition:
