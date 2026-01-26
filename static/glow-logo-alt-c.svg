@@ -1,0 +1,49 @@
+<svg width="200" height="100" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Eclipse Style - Full Logo -->
+  <defs>
+    <radialGradient id="corona-amber" cx="50%" cy="50%" r="50%">
+      <stop offset="40%" stop-color="#FFB547" stop-opacity="0"/>
+      <stop offset="70%" stop-color="#FFB547" stop-opacity="0.9"/>
+      <stop offset="85%" stop-color="#FF8A00" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FF6B00" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="corona-rose" cx="50%" cy="50%" r="50%">
+      <stop offset="40%" stop-color="#FF7EB3" stop-opacity="0"/>
+      <stop offset="70%" stop-color="#FF7EB3" stop-opacity="0.8"/>
+      <stop offset="85%" stop-color="#FF5E99" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FF3D7F" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="corona-blur" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+    </filter>
+
+    <filter id="rim-blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2"/>
+    </filter>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&amp;display=swap');
+      .logo-text { font-family: 'Space Grotesk', system-ui, sans-serif; }
+    </style>
+  </defs>
+
+  <!-- Abstract mark: eclipse corona around laptop -->
+  <g transform="translate(20, 10)">
+    <!-- Corona glow layers -->
+    <g filter="url(#corona-blur)" opacity="0.7">
+      <circle cx="45" cy="40" r="38" fill="url(#corona-amber)"/>
+      <circle cx="55" cy="38" r="32" fill="url(#corona-rose)"/>
+    </g>
+
+    <!-- Rim highlight around laptop edges -->
+    <polygon fill="none" stroke="#FFFAF0" stroke-width="3" points="22,22 52,22 56,58 18,58" filter="url(#rim-blur)" opacity="0.8"/>
+
+    <!-- Laptop trapezoid (solid dark eclipse center) -->
+    <polygon fill="#FFFAF0" points="22,22 52,22 56,58 18,58"/>
+  </g>
+
+  <!-- Typography -->
+  <text x="105" y="62" class="logo-text" fill="#1A1A1A" font-size="38" font-weight="500" style="letter-spacing: -0.02em">glow</text>
+</svg>

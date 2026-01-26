@@ -1,0 +1,22 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Radiant Rays - Icon -->
+
+  <!-- Rays radiating from behind laptop -->
+  <g transform="translate(26, 32)">
+    <polygon fill="#FFB547" points="0,-28 2.5,-8 -2.5,-8" transform="rotate(0)"/>
+    <polygon fill="#FF8A00" points="0,-26 2,-9 -2,-9" transform="rotate(30)"/>
+    <polygon fill="#FFB547" points="0,-28 2.5,-8 -2.5,-8" transform="rotate(60)"/>
+    <polygon fill="#FF8A00" points="0,-26 2,-9 -2,-9" transform="rotate(90)"/>
+    <polygon fill="#FFB547" points="0,-28 2.5,-8 -2.5,-8" transform="rotate(120)"/>
+    <polygon fill="#FF8A00" points="0,-26 2,-9 -2,-9" transform="rotate(150)"/>
+    <polygon fill="#FFB547" points="0,-28 2.5,-8 -2.5,-8" transform="rotate(180)"/>
+    <polygon fill="#FF8A00" points="0,-26 2,-9 -2,-9" transform="rotate(210)"/>
+    <polygon fill="#FFB547" points="0,-28 2.5,-8 -2.5,-8" transform="rotate(240)"/>
+    <polygon fill="#FF8A00" points="0,-26 2,-9 -2,-9" transform="rotate(270)"/>
+    <polygon fill="#FFB547" points="0,-28 2.5,-8 -2.5,-8" transform="rotate(300)"/>
+    <polygon fill="#FF8A00" points="0,-26 2,-9 -2,-9" transform="rotate(330)"/>
+  </g>
+
+  <!-- Laptop trapezoid -->
+  <polygon fill="#FFFAF0" points="14,18 38,18 42,46 10,46"/>
+</svg>

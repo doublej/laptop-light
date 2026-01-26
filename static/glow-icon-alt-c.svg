@@ -1,0 +1,38 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Eclipse Style - Icon -->
+  <defs>
+    <radialGradient id="icon-corona-amber" cx="50%" cy="50%" r="50%">
+      <stop offset="40%" stop-color="#FFB547" stop-opacity="0"/>
+      <stop offset="70%" stop-color="#FFB547" stop-opacity="0.9"/>
+      <stop offset="85%" stop-color="#FF8A00" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FF6B00" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="icon-corona-rose" cx="50%" cy="50%" r="50%">
+      <stop offset="40%" stop-color="#FF7EB3" stop-opacity="0"/>
+      <stop offset="70%" stop-color="#FF7EB3" stop-opacity="0.8"/>
+      <stop offset="85%" stop-color="#FF5E99" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FF3D7F" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="icon-corona-blur" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+
+    <filter id="icon-rim-blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5"/>
+    </filter>
+  </defs>
+
+  <!-- Corona glow layers -->
+  <g filter="url(#icon-corona-blur)" opacity="0.7">
+    <circle cx="30" cy="32" r="28" fill="url(#icon-corona-amber)"/>
+    <circle cx="36" cy="30" r="24" fill="url(#icon-corona-rose)"/>
+  </g>
+
+  <!-- Rim highlight -->
+  <polygon fill="none" stroke="#FFFAF0" stroke-width="2" points="14,18 38,18 42,46 10,46" filter="url(#icon-rim-blur)" opacity="0.8"/>
+
+  <!-- Laptop trapezoid -->
+  <polygon fill="#FFFAF0" points="14,18 38,18 42,46 10,46"/>
+</svg>
