@@ -23,10 +23,12 @@
 	let flickerIntensity = $state(50);
 
 	function isIOS(): boolean {
+		if (!browser) return false;
 		return /iPad|iPhone|iPod/.test(navigator.userAgent);
 	}
 
 	function isInAppBrowser(): boolean {
+		if (!browser) return false;
 		const ua = navigator.userAgent;
 		// iOS in-app browsers (QR scanner, social apps, etc.)
 		// Check for standalone mode (PWA) and Safari in user agent
