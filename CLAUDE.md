@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Laptop Light ("glow") is a SvelteKit web app that turns your laptop screen into warm ambient lighting. Features include color tone selection (amber, candlelight, sunset, soft pink), brightness control, candle-like flicker animation, HDR/Display-P3 color support, screen wake lock, and remote control via phone.
+Glow is a SvelteKit web app that turns your laptop screen into warm ambient lighting. Features include color tone selection (amber, candlelight, sunset, soft pink), brightness control, candle-like flicker animation, HDR/Display-P3 color support, screen wake lock, and remote control via phone.
 
 ## Commands
 

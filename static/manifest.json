@@ -1,6 +1,6 @@
 {
-	"name": "Laptop Light",
-	"short_name": "Laptop Light",
+	"name": "Glow",
+	"short_name": "Glow",
 	"description": "Turn your laptop screen into warm ambient lighting",
 	"start_url": "/",
 	"display": "standalone",

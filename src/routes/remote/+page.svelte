@@ -142,16 +142,16 @@
 </script>
 
 <svelte:head>
-	<title>Remote Control - Laptop Light</title>
+	<title>Remote Control - Glow</title>
 	<meta name="description" content="Control your laptop's ambient lighting from your phone. Adjust brightness, color tones, and flicker effects wirelessly." />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 
 	<!-- Open Graph -->
-	<meta property="og:title" content="Laptop Light Remote" />
+	<meta property="og:title" content="Glow Remote" />
 	<meta property="og:description" content="Control your laptop's ambient lighting from your phone." />
 
 	<!-- Twitter -->
-	<meta name="twitter:title" content="Laptop Light Remote" />
+	<meta name="twitter:title" content="Glow Remote" />
 	<meta name="twitter:description" content="Control your laptop's ambient lighting from your phone." />
 
 	<!-- Prevent indexing of remote control page -->
@@ -177,7 +177,7 @@
 		</div>
 	{:else if connected}
 		<header>
-			<h1>Laptop Light</h1>
+			<h1>Glow</h1>
 			<span class="connected-badge">Connected</span>
 		</header>
 

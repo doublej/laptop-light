@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
-	const siteName = 'Laptop Light';
+	const siteName = 'Glow';
 	const defaultDescription = 'Turn your laptop screen into warm ambient lighting. Control from your phone via WebRTC.';
 	const themeColor = '#f59e0b';
 </script>
@@ -14,7 +14,7 @@
 	<!-- Base meta -->
 	<meta name="theme-color" content={themeColor} />
 	<meta name="color-scheme" content="dark" />
-	<meta name="author" content="Laptop Light" />
+	<meta name="author" content="Glow" />
 	<meta name="robots" content="index, follow" />
 
 	<!-- Default OG tags (pages can override) -->
