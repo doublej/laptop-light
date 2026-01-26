@@ -47,6 +47,9 @@
 	let isMobile = $state(false);
 	let showMobileWarning = $state(false);
 
+	// Intro transition state
+	let introExiting = $state(false);
+
 	const selectedTone = $derived(tones.find((t) => t.id === selectedToneId) ?? tones[0]);
 
 	function resetHideTimer() {
@@ -108,7 +111,12 @@
 
 	function dismissPrompt() {
 		showFullscreenPrompt = false;
+		introExiting = false;
 		resetHideTimer();
+	}
+
+	function handleIntroExitStart() {
+		introExiting = true;
 	}
 
 	function toggleHdr() {
@@ -301,7 +309,7 @@
 
 <svelte:document onmousemove={handleMouseMove} />
 
-<main ontouchstart={handleTouchStart} onwheel={handleWheel}>
+<main ontouchstart={handleTouchStart} onwheel={handleWheel} ondblclick={toggleFullscreen}>
 	<LightCanvas
 		color={selectedTone.color}
 		colorP3={selectedTone.colorP3}
@@ -312,7 +320,8 @@
 	/>
 
 	<ControlPanel
-		visible={controlsVisible && !showFullscreenPrompt}
+		visible={controlsVisible && (!showFullscreenPrompt || introExiting)}
+		delayEntrance={introExiting}
 		{tones}
 		selectedToneId={selectedToneId}
 		{brightness}
@@ -348,7 +357,7 @@
 	/>
 
 	{#if showFullscreenPrompt}
-		<FullscreenPrompt ondismiss={dismissPrompt} />
+		<FullscreenPrompt ondismiss={dismissPrompt} onexitstart={handleIntroExitStart} />
 	{/if}
 
 	{#if showQRModal}
