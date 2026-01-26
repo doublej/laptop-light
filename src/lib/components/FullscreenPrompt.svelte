@@ -233,19 +233,23 @@
 	/* === TYPOGRAPHY & BUTTONS === */
 	p {
 		margin: 12px 0 32px;
-		color: rgba(20, 10, 0, 0.85);
-		font-size: 1.0625rem;
-		font-weight: 500;
-		letter-spacing: -0.015em;
-		text-shadow: 0 1px 2px rgba(255, 255, 255, 0.15);
+		color: rgba(10, 5, 0, 0.92);
+		font-size: 1.125rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		text-shadow:
+			0 1px 0 rgba(255, 255, 255, 0.25),
+			0 2px 4px rgba(180, 80, 0, 0.15);
 	}
 
 	.hint {
 		margin: -16px 0 28px;
-		font-size: 0.8125rem;
-		font-weight: 400;
-		color: rgba(20, 10, 0, 0.65);
-		text-shadow: 0 1px 1px rgba(255, 255, 255, 0.1);
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: rgba(10, 5, 0, 0.75);
+		text-shadow:
+			0 1px 0 rgba(255, 255, 255, 0.2),
+			0 1px 3px rgba(180, 80, 0, 0.1);
 	}
 
 	.buttons {
