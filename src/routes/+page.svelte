@@ -8,11 +8,12 @@
 	import QRCodeModal from '$lib/components/QRCodeModal.svelte';
 	import { createHost, sendState, sendMessage, disconnect, type LightState, type PeerMessage } from '$lib/peer';
 	import MobileHint from '$lib/components/MobileHint.svelte';
+	import WipeReveal from '$lib/components/WipeReveal.svelte';
 
-	const HDR_STORAGE_KEY = 'laptop-light-hdr-enabled';
-	const FLICKER_STORAGE_KEY = 'laptop-light-flicker-enabled';
-	const FLICKER_INTENSITY_STORAGE_KEY = 'laptop-light-flicker-intensity';
-	const WAKE_LOCK_STORAGE_KEY = 'laptop-light-wake-lock-enabled';
+	const HDR_STORAGE_KEY = 'glow-hdr-enabled';
+	const FLICKER_STORAGE_KEY = 'glow-flicker-enabled';
+	const FLICKER_INTENSITY_STORAGE_KEY = 'glow-flicker-intensity';
+	const WAKE_LOCK_STORAGE_KEY = 'glow-wake-lock-enabled';
 	const REMOTE_URL_KEY = 'glow-remote-url';
 	const HIDE_DELAY = 2500;
 	const OVERLAY_HIDE_DELAY = 1000;
@@ -49,6 +50,8 @@
 
 	// Intro transition state
 	let introExiting = $state(false);
+	let wipeActive = $state(false);
+	let wipeLogoRect: DOMRect | null = $state(null);
 
 	const selectedTone = $derived(tones.find((t) => t.id === selectedToneId) ?? tones[0]);
 
@@ -112,11 +115,22 @@
 	function dismissPrompt() {
 		showFullscreenPrompt = false;
 		introExiting = false;
+		wipeActive = false;
+		wipeLogoRect = null;
 		resetHideTimer();
 	}
 
 	function handleIntroExitStart() {
 		introExiting = true;
+	}
+
+	function handleWipeStart(logoRect: DOMRect) {
+		wipeLogoRect = logoRect;
+		wipeActive = true;
+	}
+
+	function handleWipeComplete() {
+		dismissPrompt();
 	}
 
 	function toggleHdr() {
@@ -290,20 +304,26 @@
 </script>
 
 <svelte:head>
-	<title>Laptop Light - Ambient Screen Lighting</title>
+	<title>Glow - Ambient Screen Lighting</title>
 	<meta name="description" content="Turn your laptop screen into warm ambient lighting. Choose from amber, candlelight, sunset, and soft pink tones. Control brightness and flicker from your phone." />
 
 	<!-- Open Graph -->
-	<meta property="og:title" content="Laptop Light - Ambient Screen Lighting" />
+	<meta property="og:title" content="Glow - Ambient Screen Lighting" />
 	<meta property="og:description" content="Turn your laptop screen into warm ambient lighting. Control from your phone via WebRTC." />
 	<meta property="og:url" content="/" />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="/glow-vanlife.png" />
+	<meta property="og:image:width" content="1024" />
+	<meta property="og:image:height" content="1536" />
 
 	<!-- Twitter -->
-	<meta name="twitter:title" content="Laptop Light - Ambient Screen Lighting" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="Glow - Ambient Screen Lighting" />
 	<meta name="twitter:description" content="Turn your laptop screen into warm ambient lighting. Control from your phone." />
+	<meta name="twitter:image" content="/glow-vanlife.png" />
 
 	<!-- Additional SEO -->
-	<meta name="keywords" content="ambient lighting, screen light, laptop light, warm light, candlelight effect, HDR display, remote control, WebRTC" />
+	<meta name="keywords" content="ambient lighting, screen light, glow, warm light, candlelight effect, HDR display, remote control, WebRTC" />
 	<link rel="canonical" href="/" />
 </svelte:head>
 
@@ -356,12 +376,33 @@
 		label={overlayMode === 'flicker' ? 'Flicker' : undefined}
 	/>
 
+	<WipeReveal
+		active={wipeActive}
+		startRect={wipeLogoRect}
+		color={selectedTone.color}
+		duration={700}
+		oncomplete={handleWipeComplete}
+	/>
+
 	{#if showFullscreenPrompt}
-		<FullscreenPrompt ondismiss={dismissPrompt} onexitstart={handleIntroExitStart} />
+		<FullscreenPrompt
+			ondismiss={dismissPrompt}
+			onexitstart={handleIntroExitStart}
+			onwipestart={handleWipeStart}
+		/>
 	{/if}
 
 	{#if showQRModal}
 		<QRCodeModal {peerId} connected={remoteConnected} onclose={closeQRModal} />
+	{/if}
+
+	{#if showFullscreenPrompt && !showMobileWarning}
+		<div class="polaroid polaroid-right">
+			<img src="/glow-vanlife.png" alt="Laptop glowing in a camper van at dusk" />
+		</div>
+		<div class="polaroid polaroid-left">
+			<img src="/glow-desk.png" alt="Laptop glowing on a desk in a corner" />
+		</div>
 	{/if}
 
 	{#if showMobileWarning}
@@ -489,14 +530,120 @@
 		transition-duration: 0.1s;
 	}
 
+	/* Polaroid photos */
+	.polaroid {
+		position: fixed;
+		z-index: 120;
+		padding: 10px 10px 40px;
+		background: linear-gradient(
+			165deg,
+			#ede8df 0%,
+			#e9e4da 25%,
+			#e6e0d5 50%,
+			#e8e2d8 75%,
+			#e4ded3 100%
+		);
+		box-shadow:
+			0 1px 1px rgba(0, 0, 0, 0.04),
+			0 4px 8px rgba(0, 0, 0, 0.04),
+			0 12px 36px rgba(0, 0, 0, 0.12),
+			0 24px 60px rgba(0, 0, 0, 0.08);
+		border: 1px solid rgba(0, 0, 0, 0.04);
+		opacity: 0;
+	}
+
+	.polaroid::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+		opacity: 0.035;
+		pointer-events: none;
+		mix-blend-mode: multiply;
+	}
+
+	.polaroid::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			180deg,
+			transparent 0%,
+			transparent 70%,
+			rgba(0, 0, 0, 0.008) 100%
+		);
+		pointer-events: none;
+	}
+
+	.polaroid img {
+		position: relative;
+		display: block;
+		width: 200px;
+		height: 200px;
+		aspect-ratio: 1 / 1;
+		object-fit: cover;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+		border-radius: 1px;
+	}
+
+	.polaroid-right {
+		bottom: 48px;
+		right: 48px;
+		transform: rotate(5deg);
+		z-index: 121;
+		animation: polaroid-in-right 0.6s cubic-bezier(0, 0, 0.2, 1) 0.9s forwards;
+	}
+
+	.polaroid-right img {
+		object-position: center 30%;
+	}
+
+	.polaroid-left {
+		bottom: 72px;
+		right: 200px;
+		transform: rotate(-6deg);
+		z-index: 120;
+		animation: polaroid-in-left 0.6s cubic-bezier(0, 0, 0.2, 1) 0.8s forwards;
+	}
+
+	.polaroid-left img {
+		object-position: center 60%;
+	}
+
+	@keyframes polaroid-in-right {
+		from {
+			opacity: 0;
+			transform: rotate(5deg) translateY(20px) scale(0.9);
+		}
+		to {
+			opacity: 1;
+			transform: rotate(5deg) translateY(0) scale(1);
+		}
+	}
+
+	@keyframes polaroid-in-left {
+		from {
+			opacity: 0;
+			transform: rotate(-6deg) translateY(20px) scale(0.9);
+		}
+		to {
+			opacity: 1;
+			transform: rotate(-6deg) translateY(0) scale(1);
+		}
+	}
+
 	/* Reduced motion */
 	@media (prefers-reduced-motion: reduce) {
 		.mobile-warning,
 		.mobile-warning-content,
 		.laptop-icon,
-		.continue-btn {
+		.continue-btn,
+		.polaroid-right,
+		.polaroid-left {
 			transition-duration: 0.01ms !important;
 			transition-delay: 0s !important;
+			animation-duration: 0.01ms !important;
+			animation-delay: 0s !important;
 		}
 	}
 </style>
