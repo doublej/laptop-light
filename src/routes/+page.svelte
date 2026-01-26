@@ -22,7 +22,7 @@
 	let selectedToneId = $state(defaultToneId);
 	let brightness = $state(100);
 	let controlsVisible = $state(true);
-	let showFullscreenPrompt = $state(false);
+	let showFullscreenPrompt = $state(true);
 	let isFullscreen = $state(false);
 	let hdrEnabled = $state(false);
 	let hdrSupported = $state(false);
@@ -269,9 +269,9 @@
 			requestWakeLock();
 		}
 
-		// Only show fullscreen prompt on desktop
-		if (!isMobile) {
-			showFullscreenPrompt = true;
+		// Hide fullscreen prompt on mobile (shows mobile warning instead)
+		if (isMobile) {
+			showFullscreenPrompt = false;
 		}
 
 		document.addEventListener('fullscreenchange', handleFullscreenChange);
