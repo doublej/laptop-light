@@ -26,6 +26,19 @@
 		return /iPad|iPhone|iPod/.test(navigator.userAgent);
 	}
 
+	function isInAppBrowser(): boolean {
+		const ua = navigator.userAgent;
+		// iOS in-app browsers (QR scanner, social apps, etc.)
+		// Check for standalone mode (PWA) and Safari in user agent
+		const isStandalone = (navigator as Navigator & { standalone?: boolean }).standalone;
+		return isIOS() && !isStandalone && !/Safari/.test(ua);
+	}
+
+	function openInSafari() {
+		// Use the x-safari URL scheme to open in Safari
+		window.location.href = window.location.href;
+	}
+
 	function handleStateUpdate(state: LightState) {
 		toneId = state.toneId;
 		brightness = state.brightness;
@@ -57,6 +70,7 @@
 
 	function hideQROnHost() {
 		sendMessage({ type: 'closeQRModal' });
+		qrModalOpenOnHost = false; // Dismiss locally immediately
 	}
 
 	function dismissHomescreenHint() {
@@ -131,7 +145,13 @@
 </svelte:head>
 
 <main>
-	{#if error}
+	{#if isInAppBrowser()}
+		<div class="safari-prompt">
+			<p>For the best experience, open in Safari</p>
+			<button onclick={openInSafari}>Open in Safari</button>
+			<p class="safari-hint">Tap the Safari icon in the bottom-right, or copy the URL</p>
+		</div>
+	{:else if error}
 		<div class="status-card error">
 			<p>{error}</p>
 			<button onclick={() => window.location.reload()}>Retry</button>
@@ -560,5 +580,37 @@
 
 	.hint-instruction strong {
 		color: #f59e0b;
+	}
+
+	.safari-prompt {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		padding: 48px 24px;
+		text-align: center;
+	}
+
+	.safari-prompt p {
+		margin: 0;
+		font-size: 18px;
+		font-weight: 500;
+	}
+
+	.safari-prompt button {
+		padding: 14px 32px;
+		background: linear-gradient(135deg, #007AFF 0%, #0051D4 100%);
+		border: none;
+		border-radius: 12px;
+		font-size: 16px;
+		font-weight: 600;
+		color: white;
+		cursor: pointer;
+	}
+
+	.safari-hint {
+		font-size: 13px !important;
+		font-weight: 400 !important;
+		color: rgba(255, 255, 255, 0.5);
 	}
 </style>
