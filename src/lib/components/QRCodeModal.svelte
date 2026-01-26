@@ -11,6 +11,7 @@
 	let { peerId, connected, onclose }: Props = $props();
 
 	let canvas: HTMLCanvasElement;
+	let mounted = $state(false);
 	let remoteUrl = $derived(
 		typeof window !== 'undefined'
 			? `${window.location.origin}/remote?peer=${peerId}`
@@ -25,10 +26,13 @@
 				color: { dark: '#1e1e1e', light: '#ffffff' }
 			});
 		}
+		requestAnimationFrame(() => {
+			mounted = true;
+		});
 	});
 </script>
 
-<div class="overlay" onclick={onclose} onkeydown={(e) => e.key === 'Escape' && onclose()} role="presentation">
+<div class="overlay" class:mounted onclick={onclose} onkeydown={(e) => e.key === 'Escape' && onclose()} role="presentation">
 	<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" tabindex="-1">
 		<button class="close-btn" onclick={onclose} aria-label="Close">
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -60,9 +64,17 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		background: rgba(0, 0, 0, 0);
+		backdrop-filter: blur(0);
+		z-index: 100;
+		transition:
+			background 0.3s cubic-bezier(0, 0, 0.2, 1),
+			backdrop-filter 0.3s cubic-bezier(0, 0, 0.2, 1);
+	}
+
+	.overlay.mounted {
 		background: rgba(0, 0, 0, 0.7);
 		backdrop-filter: blur(4px);
-		z-index: 100;
 	}
 
 	.modal {
@@ -75,6 +87,17 @@
 		border-radius: 24px;
 		max-width: 320px;
 		text-align: center;
+		opacity: 0;
+		transform: scale(0.92) translateY(12px);
+		transition:
+			opacity 0.35s cubic-bezier(0, 0, 0.2, 1),
+			transform 0.35s cubic-bezier(0, 0, 0.2, 1);
+		transition-delay: 0.05s;
+	}
+
+	.overlay.mounted .modal {
+		opacity: 1;
+		transform: scale(1) translateY(0);
 	}
 
 	.close-btn {
@@ -168,5 +191,14 @@
 		font-size: 11px;
 		color: rgba(30, 30, 30, 0.4);
 		word-break: break-all;
+	}
+
+	/* Reduced motion */
+	@media (prefers-reduced-motion: reduce) {
+		.overlay,
+		.modal {
+			transition-duration: 0.01ms !important;
+			transition-delay: 0s !important;
+		}
 	}
 </style>

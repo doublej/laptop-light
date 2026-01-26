@@ -22,24 +22,35 @@
 		position: fixed;
 		right: 24px;
 		top: 50%;
-		transform: translateY(-50%);
+		transform: translateY(-50%) translateX(12px);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 8px;
 		z-index: 100;
 		opacity: 0;
-		transition: opacity 0.2s ease-out;
+		transition:
+			opacity 0.2s cubic-bezier(0.4, 0, 1, 1),
+			transform 0.2s cubic-bezier(0.4, 0, 1, 1);
 		pointer-events: none;
 	}
 
 	.overlay.left {
 		right: auto;
 		left: 24px;
+		transform: translateY(-50%) translateX(-12px);
 	}
 
 	.overlay.visible {
 		opacity: 1;
+		transform: translateY(-50%) translateX(0);
+		transition:
+			opacity 0.25s cubic-bezier(0, 0, 0.2, 1),
+			transform 0.25s cubic-bezier(0, 0, 0.2, 1);
+	}
+
+	.overlay.left.visible {
+		transform: translateY(-50%) translateX(0);
 	}
 
 	.track {
@@ -79,5 +90,12 @@
 	.label.flicker {
 		color: #ffb040;
 		text-shadow: 0 0 12px rgba(255, 176, 64, 0.6);
+	}
+
+	/* Reduced motion */
+	@media (prefers-reduced-motion: reduce) {
+		.overlay {
+			transition-duration: 0.01ms !important;
+		}
 	}
 </style>

@@ -164,56 +164,54 @@
 	</div>
 
 	<!-- Settings panel -->
-	{#if settingsOpen}
-		<div class="settings-panel">
-			<!-- Flicker -->
-			<div class="setting-row">
-				<button class="setting-toggle" class:enabled={flickerEnabled} onclick={onFlickerToggle}>
-					<span class="setting-label">Candle Flicker</span>
-					<span class="toggle-track"><span class="toggle-thumb"></span></span>
-				</button>
-				{#if flickerEnabled}
-					<input
-						type="range"
-						min="0"
-						max="100"
-						value={flickerIntensity}
-						oninput={handleFlickerInput}
-						class="slider mini"
-						aria-label="Flicker intensity"
-					/>
-				{/if}
-			</div>
-
-			<!-- HDR -->
-			<div class="setting-row">
-				<button
-					class="setting-toggle"
-					class:enabled={hdrEnabled}
-					class:unsupported={!hdrSupported}
-					onclick={onHdrToggle}
-					disabled={!hdrSupported}
-				>
-					<span class="setting-label">Wide Color (P3)</span>
-					<span class="toggle-track"><span class="toggle-thumb"></span></span>
-				</button>
-			</div>
-
-			<!-- Always On -->
-			<div class="setting-row">
-				<button
-					class="setting-toggle"
-					class:enabled={wakeLockEnabled}
-					class:unsupported={!wakeLockSupported}
-					onclick={onWakeLockToggle}
-					disabled={!wakeLockSupported}
-				>
-					<span class="setting-label">Always On</span>
-					<span class="toggle-track"><span class="toggle-thumb"></span></span>
-				</button>
-			</div>
+	<div class="settings-panel" class:open={settingsOpen}>
+		<!-- Flicker -->
+		<div class="setting-row" style="--row-index: 0">
+			<button class="setting-toggle" class:enabled={flickerEnabled} onclick={onFlickerToggle}>
+				<span class="setting-label">Candle Flicker</span>
+				<span class="toggle-track"><span class="toggle-thumb"></span></span>
+			</button>
+			{#if flickerEnabled}
+				<input
+					type="range"
+					min="0"
+					max="100"
+					value={flickerIntensity}
+					oninput={handleFlickerInput}
+					class="slider mini"
+					aria-label="Flicker intensity"
+				/>
+			{/if}
 		</div>
-	{/if}
+
+		<!-- HDR -->
+		<div class="setting-row" style="--row-index: 1">
+			<button
+				class="setting-toggle"
+				class:enabled={hdrEnabled}
+				class:unsupported={!hdrSupported}
+				onclick={onHdrToggle}
+				disabled={!hdrSupported}
+			>
+				<span class="setting-label">Wide Color (P3)</span>
+				<span class="toggle-track"><span class="toggle-thumb"></span></span>
+			</button>
+		</div>
+
+		<!-- Always On -->
+		<div class="setting-row" style="--row-index: 2">
+			<button
+				class="setting-toggle"
+				class:enabled={wakeLockEnabled}
+				class:unsupported={!wakeLockSupported}
+				onclick={onWakeLockToggle}
+				disabled={!wakeLockSupported}
+			>
+				<span class="setting-label">Always On</span>
+				<span class="toggle-track"><span class="toggle-thumb"></span></span>
+			</button>
+		</div>
+	</div>
 </div>
 
 <style>
@@ -221,21 +219,27 @@
 		position: fixed;
 		bottom: 24px;
 		left: 50%;
-		transform: translateX(-50%);
+		transform: translateX(-50%) translateY(16px);
 		z-index: 10;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 12px;
 		opacity: 0;
-		transition: opacity 0.3s ease-out;
+		transition:
+			opacity 0.25s cubic-bezier(0.4, 0, 1, 1),
+			transform 0.25s cubic-bezier(0.4, 0, 1, 1);
 		pointer-events: none;
 		font-family: 'DM Sans', system-ui, sans-serif;
 	}
 
 	.control-panel.visible {
 		opacity: 1;
+		transform: translateX(-50%) translateY(0);
 		pointer-events: auto;
+		transition:
+			opacity 0.35s cubic-bezier(0, 0, 0.2, 1),
+			transform 0.35s cubic-bezier(0, 0, 0.2, 1);
 	}
 
 	.main-bar {
@@ -413,6 +417,22 @@
 			0 4px 24px rgba(0, 0, 0, 0.12),
 			0 1px 2px rgba(0, 0, 0, 0.08);
 		min-width: 200px;
+		opacity: 0;
+		transform: translateY(-8px) scale(0.95);
+		transform-origin: bottom center;
+		pointer-events: none;
+		transition:
+			opacity 0.2s cubic-bezier(0.4, 0, 1, 1),
+			transform 0.2s cubic-bezier(0.4, 0, 1, 1);
+	}
+
+	.settings-panel.open {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+		pointer-events: auto;
+		transition:
+			opacity 0.3s cubic-bezier(0, 0, 0.2, 1),
+			transform 0.3s cubic-bezier(0, 0, 0.2, 1);
 	}
 
 	.setting-row {
@@ -420,6 +440,17 @@
 		align-items: center;
 		gap: 12px;
 		padding: 4px;
+		opacity: 0;
+		transform: translateY(-4px);
+		transition:
+			opacity 0.25s cubic-bezier(0, 0, 0.2, 1),
+			transform 0.25s cubic-bezier(0, 0, 0.2, 1);
+		transition-delay: calc(var(--row-index) * 50ms);
+	}
+
+	.settings-panel.open .setting-row {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	.setting-toggle {
@@ -491,7 +522,11 @@
 			bottom: 16px;
 			left: 16px;
 			right: 16px;
-			transform: none;
+			transform: translateY(16px);
+		}
+
+		.control-panel.visible {
+			transform: translateY(0);
 		}
 
 		.main-bar {
@@ -506,6 +541,16 @@
 
 		.settings-panel {
 			width: 100%;
+		}
+	}
+
+	/* Reduced motion */
+	@media (prefers-reduced-motion: reduce) {
+		.control-panel,
+		.settings-panel,
+		.setting-row {
+			transition-duration: 0.01ms !important;
+			transition-delay: 0s !important;
 		}
 	}
 </style>

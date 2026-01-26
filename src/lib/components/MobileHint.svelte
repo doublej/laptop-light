@@ -46,14 +46,17 @@
 		color: rgba(255, 255, 255, 0.9);
 		cursor: pointer;
 		z-index: 50;
-		transition: opacity 0.2s, transform 0.2s;
-		animation: slideUp 0.3s ease-out;
+		transition:
+			opacity 0.2s cubic-bezier(0, 0, 0.2, 1),
+			transform 0.2s cubic-bezier(0, 0, 0.2, 1),
+			background 0.2s cubic-bezier(0, 0, 0.2, 1);
+		animation: slideUp 0.4s cubic-bezier(0, 0, 0.2, 1) forwards;
 	}
 
 	@keyframes slideUp {
 		from {
 			opacity: 0;
-			transform: translateX(-50%) translateY(10px);
+			transform: translateX(-50%) translateY(16px);
 		}
 		to {
 			opacity: 1;
@@ -81,5 +84,14 @@
 
 	.hint:hover .close {
 		opacity: 1;
+	}
+
+	/* Reduced motion */
+	@media (prefers-reduced-motion: reduce) {
+		.hint {
+			animation: none;
+			opacity: 1;
+			transition-duration: 0.01ms !important;
+		}
 	}
 </style>

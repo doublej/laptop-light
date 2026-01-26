@@ -356,7 +356,7 @@
 	{/if}
 
 	{#if showMobileWarning}
-		<div class="mobile-warning">
+		<div class="mobile-warning mounted">
 			<div class="mobile-warning-content">
 				<div class="laptop-icon">💻</div>
 				<h2>Open on Your Laptop</h2>
@@ -395,16 +395,44 @@
 		justify-content: center;
 		padding: 24px;
 		background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+		opacity: 0;
+		transition: opacity 0.4s cubic-bezier(0, 0, 0.2, 1);
+	}
+
+	.mobile-warning.mounted {
+		opacity: 1;
 	}
 
 	.mobile-warning-content {
 		text-align: center;
 		max-width: 320px;
+		opacity: 0;
+		transform: translateY(16px);
+		transition:
+			opacity 0.4s cubic-bezier(0, 0, 0.2, 1),
+			transform 0.4s cubic-bezier(0, 0, 0.2, 1);
+		transition-delay: 0.1s;
+	}
+
+	.mobile-warning.mounted .mobile-warning-content {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	.laptop-icon {
 		font-size: 64px;
 		margin-bottom: 24px;
+		opacity: 0;
+		transform: scale(0.8);
+		transition:
+			opacity 0.5s cubic-bezier(0, 0, 0.2, 1),
+			transform 0.5s cubic-bezier(0, 0, 0.2, 1);
+		transition-delay: 0.2s;
+	}
+
+	.mobile-warning.mounted .laptop-icon {
+		opacity: 1;
+		transform: scale(1);
 	}
 
 	.mobile-warning h2 {
@@ -436,11 +464,30 @@
 		font-weight: 500;
 		color: rgba(255, 255, 255, 0.8);
 		cursor: pointer;
-		transition: all 0.2s;
+		transition:
+			background 0.2s cubic-bezier(0, 0, 0.2, 1),
+			color 0.2s cubic-bezier(0, 0, 0.2, 1),
+			transform 0.2s cubic-bezier(0, 0, 0.2, 1);
 	}
 
 	.continue-btn:hover {
 		background: rgba(255, 255, 255, 0.15);
 		color: #fff;
+	}
+
+	.continue-btn:active {
+		transform: scale(0.98);
+		transition-duration: 0.1s;
+	}
+
+	/* Reduced motion */
+	@media (prefers-reduced-motion: reduce) {
+		.mobile-warning,
+		.mobile-warning-content,
+		.laptop-icon,
+		.continue-btn {
+			transition-duration: 0.01ms !important;
+			transition-delay: 0s !important;
+		}
 	}
 </style>
