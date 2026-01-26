@@ -72,7 +72,7 @@
 				<span class="line">Your screen,</span>
 				<span class="line accent">reimagined as light.</span>
 			</h1>
-			<p class="hint">Ambient warmth for those moments without soft lighting.</p>
+			<p class="hint">Ambient warmth for those moments<br />without soft lighting.</p>
 			<div class="buttons">
 				<button class="primary" onclick={handleEnterFullscreen}>
 					Enter Fullscreen
@@ -267,6 +267,7 @@
 		margin: 0 0 32px;
 		font-size: 1rem;
 		font-weight: 400;
+		line-height: 1.5;
 		letter-spacing: -0.01em;
 		color: rgba(40, 15, 0, 0.65);
 		text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
