@@ -43,6 +43,10 @@
 	let peerId = $state('');
 	let remoteConnected = $state(false);
 
+	// Mobile detection
+	let isMobile = $state(false);
+	let showMobileWarning = $state(false);
+
 	const selectedTone = $derived(tones.find((t) => t.id === selectedToneId) ?? tones[0]);
 
 	function resetHideTimer() {
@@ -212,7 +216,20 @@
 		}
 	}
 
+	function dismissMobileWarning() {
+		showMobileWarning = false;
+		showFullscreenPrompt = true;
+	}
+
 	onMount(() => {
+		// Detect mobile device
+		isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+			navigator.userAgent
+		);
+		if (isMobile) {
+			showMobileWarning = true;
+		}
+
 		// Detect Display-P3 support
 		hdrSupported = window.matchMedia('(color-gamut: p3)').matches;
 
@@ -244,7 +261,10 @@
 			requestWakeLock();
 		}
 
-		showFullscreenPrompt = true;
+		// Only show fullscreen prompt on desktop
+		if (!isMobile) {
+			showFullscreenPrompt = true;
+		}
 
 		document.addEventListener('fullscreenchange', handleFullscreenChange);
 		document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -321,6 +341,21 @@
 	{#if showQRModal}
 		<QRCodeModal {peerId} connected={remoteConnected} onclose={closeQRModal} />
 	{/if}
+
+	{#if showMobileWarning}
+		<div class="mobile-warning">
+			<div class="mobile-warning-content">
+				<div class="laptop-icon">💻</div>
+				<h2>Open on Your Laptop</h2>
+				<p>This app turns your laptop screen into ambient lighting. Open this page on your laptop, then use your phone as a remote control.</p>
+				<div class="mobile-warning-buttons">
+					<button class="continue-btn" onclick={dismissMobileWarning}>
+						Continue Anyway
+					</button>
+				</div>
+			</div>
+		</div>
+	{/if}
 </main>
 
 <style>
@@ -336,5 +371,63 @@
 		position: fixed;
 		inset: 0;
 		touch-action: manipulation;
+	}
+
+	.mobile-warning {
+		position: fixed;
+		inset: 0;
+		z-index: 200;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 24px;
+		background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+	}
+
+	.mobile-warning-content {
+		text-align: center;
+		max-width: 320px;
+	}
+
+	.laptop-icon {
+		font-size: 64px;
+		margin-bottom: 24px;
+	}
+
+	.mobile-warning h2 {
+		margin: 0 0 16px;
+		font-size: 24px;
+		font-weight: 600;
+		color: #fff;
+	}
+
+	.mobile-warning p {
+		margin: 0 0 32px;
+		font-size: 15px;
+		line-height: 1.5;
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	.mobile-warning-buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.continue-btn {
+		padding: 14px 28px;
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 12px;
+		font-size: 15px;
+		font-weight: 500;
+		color: rgba(255, 255, 255, 0.8);
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+
+	.continue-btn:hover {
+		background: rgba(255, 255, 255, 0.15);
+		color: #fff;
 	}
 </style>
