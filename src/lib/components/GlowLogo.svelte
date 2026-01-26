@@ -43,7 +43,7 @@
 				<stop offset="100%" stop-color="#FFD699" stop-opacity="0" />
 			</radialGradient>
 
-			<!-- Blur filter for glow effect -->
+			<!-- Blur filters -->
 			<filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
 				<feGaussianBlur in="SourceGraphic" stdDeviation="2" />
 			</filter>
@@ -51,27 +51,29 @@
 			<filter id="outer-glow" x="-100%" y="-100%" width="300%" height="300%">
 				<feGaussianBlur in="SourceGraphic" stdDeviation="6" />
 			</filter>
+
+			<!-- Mask with laptop cutout -->
+			<mask id="laptop-cutout">
+				<rect x="0" y="0" width="100" height="100" fill="white" />
+				<polygon fill="black" points="12,15 68,20 70,62 8,66" />
+			</mask>
 		</defs>
 
-		<!-- Abstract mark: overlapping luminous orbs -->
-		<g class="mark" transform="translate(20, 10)">
+		<!-- Abstract mark: luminous halos with laptop cutout -->
+		<g class="mark" transform="translate(20, 10)" mask="url(#laptop-cutout)">
 			<!-- Outer glow layer -->
-			<g filter="url(#outer-glow)" opacity="0.4">
-				<circle cx="40" cy="40" r="32" fill="url(#glow-amber)" />
-				<circle cx="60" cy="38" r="28" fill="url(#glow-rose)" />
-				<circle cx="50" cy="50" r="24" fill="url(#glow-cream)" />
+			<g filter="url(#outer-glow)" opacity="0.5">
+				<circle cx="40" cy="40" r="36" fill="url(#glow-amber)" />
+				<circle cx="60" cy="38" r="32" fill="url(#glow-rose)" />
+				<circle cx="50" cy="50" r="28" fill="url(#glow-cream)" />
 			</g>
 
-			<!-- Main orbs with soft edges -->
+			<!-- Main halos with soft edges -->
 			<g filter="url(#soft-glow)">
-				<circle cx="40" cy="40" r="28" fill="url(#glow-amber)" class="orb orb-1" />
-				<circle cx="58" cy="36" r="22" fill="url(#glow-rose)" class="orb orb-2" />
-				<circle cx="48" cy="48" r="18" fill="url(#glow-cream)" class="orb orb-3" />
+				<circle cx="40" cy="40" r="32" fill="url(#glow-amber)" class="orb orb-1" />
+				<circle cx="58" cy="36" r="26" fill="url(#glow-rose)" class="orb orb-2" />
+				<circle cx="48" cy="48" r="22" fill="url(#glow-cream)" class="orb orb-3" />
 			</g>
-
-			<!-- Bright core -->
-			<circle cx="48" cy="42" r="8" fill="#FFFAF0" opacity="0.9" class="core" />
-			<circle cx="48" cy="42" r="4" fill="#FFFFFF" class="core-inner" />
 		</g>
 
 		<!-- Typography -->
@@ -109,15 +111,6 @@
 		animation-delay: -2.6s;
 	}
 
-	.core {
-		animation: pulse 2s ease-in-out infinite;
-	}
-
-	.core-inner {
-		animation: pulse 2s ease-in-out infinite;
-		animation-delay: -0.5s;
-	}
-
 	@keyframes breathe {
 		0%,
 		100% {
@@ -130,21 +123,9 @@
 		}
 	}
 
-	@keyframes pulse {
-		0%,
-		100% {
-			opacity: 0.9;
-		}
-		50% {
-			opacity: 0.6;
-		}
-	}
-
 	/* Respect reduced motion */
 	@media (prefers-reduced-motion: reduce) {
-		.orb,
-		.core,
-		.core-inner {
+		.orb {
 			animation: none;
 		}
 	}
