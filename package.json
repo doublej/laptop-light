@@ -1,7 +1,7 @@
 {
   "name": "glow",
   "version": "0.1.0",
-  "description": "A SvelteKit application",
+  "description": "Ambient screen lighting with HDR/P3 color, flicker, remote control.",
   "type": "module",
   "scripts": {
     "dev": "vite dev --host",
